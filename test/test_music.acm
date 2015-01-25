@@ -1,0 +1,29 @@
+;;; ****************************************************************************
+;;; Spaceballs - Test Music
+;;;
+;;; Plays tune w/o using a rasterline interrupt
+;;; 
+;;; References	 
+;;;	http://codebase64.org/doku.php?id=base:demo_coding_introduction
+;;; ****************************************************************************
+	
+!to "test-music.prg", cbm
+	
+*=$0801				; SYS 2049
+	lda #$00
+	tax
+	tay
+	jsr $1000	; initialize music
+
+mainloop:  
+	lda $d012	; load $d012
+	cmp #$80	; is it equal to #$80?
+	bne mainloop	; if not, keep checking
+
+	inc $d020	; inc border colour
+	jsr $1003	; jump to music play routine
+	dec $d020	; dec border colour
+	jmp mainloop	; keep looping
+
+*=$1000
+!bin "../press_space.sid",,$7e

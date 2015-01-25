@@ -1,0 +1,74 @@
+;;; ****************************************************************************
+;;; Spaceballs - Music
+;;; 
+;;; References
+;;;	http://codebase64.org/doku.php?id=base:demo_coding_introduction
+;;;	http://codebase64.org/doku.php?id=base:simple_irq_music_player
+;;; ****************************************************************************
+
+;;; ----------------------------------------------------------------------------
+;;; Constants
+;;; For other general constants, see sb_constants.acm
+;;; ----------------------------------------------------------------------------
+
+MUS_INIT	= $1000		;  Initialize music
+MUS_PLAY	= $1003		;  Play music
+				
+;;; ----------------------------------------------------------------------------
+;;; Program
+;;; ----------------------------------------------------------------------------
+
+	sei			; Turn off interrupts
+
+	lda #$7f
+	ldx #$01
+	sta CIA1_IRQ		; Turn off CIA interrupts
+	sta CIA2_IRQ		
+	stx VIC_IMR		; Turn on raster interrupts
+
+	lda #$1b
+	ldx #$08
+	ldy #$14
+	sta VIC_REG1		; Clear high bit of $d012, set text mode
+	stx VIC_REG2		; Single-colour mode
+	sty VIC_MCTL		; screen at $0400, charset at $2000
+		
+	lda #<irq		; LSB of interrupt handler code
+	ldx #>irq		; MSB 
+	sta IRQPTR		; Store in interrupt pointer 
+	stx IRQPTR + 1
+	
+	ldy #$80		; Raster line to trigger interrupt
+	sty VIC_RPOS 
+	
+	lda CIA1_IRQ		; ACK CIA interrupts
+	lda CIA2_IRQ
+	asl VIC_IRR		; ACK VIC interrupts
+
+	lda #$00		; Clear registers
+	tax
+	tay
+	jsr MUS_INIT		; Initialize music
+	
+	cli
+
+hold
+	jmp hold
+
+;;; Interrupt instructions
+irq
+	jsr MUS_PLAY
+	
+	asl VIC_IRR		; ACK interrupt
+	pla			; Restore registers from stack
+	tay
+	pla
+	tax
+	pla
+	
+	rti			; Return from interrupt
+
+;;; Music
+;;; See CREDITS for info about the composition
+*=MUS_INIT
+!bin "press_space.sid",,$7e

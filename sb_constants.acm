@@ -1,0 +1,19 @@
+;;; ****************************************************************************
+;;; Spaceballs - General Constants
+;;; ****************************************************************************
+	
+IRQPTR		= $0314		; Interrupt pointer
+
+VIC		= $d000		; VIC base address
+VIC_REG1	= VIC + $11	; Control register 1
+VIC_RPOS	= VIC + $12	; Raster position
+VIC_REG2	= VIC + $16	; Control register 2
+VIC_MCTL	= VIC + $18 	; Memory control register
+VIC_IMR		= VIC + $1a	; Interrupt mask register
+VIC_IRR		= VIC + $19	; Interrupt request register
+			
+CIA1		= $dc00		; CIA 1 base address
+CIA1_IRQ	= CIA1 + $0d	; IRQ control register
+
+CIA2		= $dd00		; CIA 2 base address
+CIA2_IRQ	= CIA2 + $0d	; IRQ control register	

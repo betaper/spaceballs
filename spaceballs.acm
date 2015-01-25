@@ -1,0 +1,17 @@
+;;; ****************************************************************************
+;;; Spaceballs
+;;; C64 Demo Effect
+;;; Alex Feller, c64@findingthingsout.de
+;;; ****************************************************************************
+
+!to "spaceballs.prg", cbm
+
+;;; Basic line SYS 2062		
+*=$0801
+!byte $0B, $08, $DD,$07, $9E, $20, $32, $30, $36, $32, $00, $00, $00 
+		
+!source "sb_constants.acm"	; Include constants
+!source "sb_music.acm"		; Play music
+
+		
+	
