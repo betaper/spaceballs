@@ -6,12 +6,20 @@
 
 !to "spaceballs.prg", cbm
 
+;;; Profile flag (to test code timings)
+;;; 1=enabled, 0=disabled
+!set PRFL = 1			
+	
 ;;; Basic line SYS 2062		
 *=$0801
 !byte $0B, $08, $DD,$07, $9E, $20, $32, $30, $36, $32, $00, $00, $00 
 		
 !source "sb_constants.acm"	; Include constants
 !source "sb_music.acm"		; Play music
+
+*=MUS_INIT			; Include music
+!bin "press_space.sid",,$7e	; Skip $7c bytes long header + start address
+
 
 		
 	

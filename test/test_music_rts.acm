@@ -1,16 +1,21 @@
 ;;; ****************************************************************************
-;;; Spaceballs - Music
+;;; Spaceballs - Test Music with Return to BASIC
+;;;
+;;; Plays tune via rasterline interrupt and returns to BASIC
 ;;; 
 ;;; References
 ;;;	http://codebase64.org/doku.php?id=base:demo_coding_introduction
 ;;;	http://codebase64.org/doku.php?id=base:simple_irq_music_player
 ;;; ****************************************************************************
 
+!to "test-music-rts.prg", cbm
+	
 ;;; ----------------------------------------------------------------------------
 ;;; Constants
-;;; For other general constants, see sb_constants.acm
 ;;; ----------------------------------------------------------------------------
 
+!source "../sb_constants.acm"
+	
 MUS_INIT	= $1000		;  Initialize music
 MUS_PLAY	= $1003		;  Play music
 				
@@ -18,13 +23,12 @@ MUS_PLAY	= $1003		;  Play music
 ;;; Program
 ;;; ----------------------------------------------------------------------------
 
-;;; Initialize music
+*=$080e				; Start with SYS 2062	
 	lda #$00		; Clear registers
 	tax
 	tay
-	jsr MUS_INIT		
-
-;;; Prepare rasterline interrupt
+	jsr MUS_INIT		; Initialize music
+	
 	sei			; Turn off interrupts
 
 	lda #$7f
@@ -51,43 +55,23 @@ MUS_PLAY	= $1003		;  Play music
 	lda CIA1_IRQ		; ACK CIA interrupts
 	lda CIA2_IRQ
 	asl VIC_IRR		; ACK VIC interrupts
-	
+
 	cli
 
-;;; Enter infinite loop
-hold
-	jmp hold
+	rts
 
 ;;; ----------------------------------------------------------------------------
 ;;; Interrupt routine
 ;;; ----------------------------------------------------------------------------
 	
 irq
-
-	;; if PRFL flag set, then show color raster bar
-	!if PRFL = 1 {
-	lda VIC_BCOL		; Push current border color to stack
-	pha
-	lda #COL_RED		; Set new border color
-	sta VIC_BCOL
-	}
-	
-	jsr MUS_PLAY		; Play music
-	
-	!if PRFL = 1 {
-	pla			; Restore original border color
-	sta VIC_BCOL		
-	}
-	
+	jsr MUS_PLAY
 	asl VIC_IRR		; ACK interrupt
-	pla			; Restore registers from stack
-	tay
-	pla
-	tax
-	pla
-	
-	rti			; Return from interrupt
+	jmp $ea31
 
-	
+;;; ----------------------------------------------------------------------------
+;;; Include music
+;;; ----------------------------------------------------------------------------
 
-	
+*=MUS_INIT
+!bin "../press_space.sid",,$7e
