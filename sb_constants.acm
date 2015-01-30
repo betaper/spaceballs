@@ -1,10 +1,27 @@
 ;;; ****************************************************************************
-;;; Spaceballs - General Constants
+;;; Spaceballs - Constants
 ;;; ****************************************************************************
 	
-IRQPTR		= $0314		; Interrupt pointer
-
+;;; ----------------------------------------------------------------------------
+;;; VIC
+;;; ----------------------------------------------------------------------------
+	
 VIC		= $d000		; VIC base address
+
+SPR0POSX	= VIC		; Sprite 0, X position
+SPR0POSY	= VIC + $01	; Sprite 0, Y position
+SPRXHIGH	= VIC + $10	; Sprite X position, high bit
+SPRACT		= VIC + $15	; Sprites active
+SPRDH		= VIC + $17	; Sprites, double height 
+SPRBOT		= VIC + $1b	; Sprites below background (bottom)
+SPRMCOL		= VIC + $1c	; Multicolor sprites
+SPRDW		= VIC + $1d	; Sprites, double width
+SPRCOLLSPR	= VIC + $1e	; Sprite-sprite collision
+SPRCOLLBKG	= VIC + $1f	; Sprite-background collision
+SPRMCOL0	= VIC + $25	; Multicolor sprites, color 0
+SPRMCOL1	= VIC + $26	; Multicolor sprites, color 1
+SPR0COL		= VIC + $27	; Sprite 0, color
+			
 VIC_REG1	= VIC + $11	; Control register 1
 VIC_RPOS	= VIC + $12	; Raster position
 VIC_REG2	= VIC + $16	; Control register 2
@@ -12,11 +29,35 @@ VIC_MCTL	= VIC + $18 	; Memory control register
 VIC_IMR		= VIC + $1a	; Interrupt mask register
 VIC_IRR		= VIC + $19	; Interrupt request register
 VIC_BCOL	= VIC + $20	; Border color 
-				
+
+;;; ----------------------------------------------------------------------------
+;;; Screen, sprites
+;;; ----------------------------------------------------------------------------
+
+SCRRAM		= $400		; Start of screen character memory
+SPR0DAT		= SCRRAM + $3f8	; Sprite 0 pointer
+		
+;;; ----------------------------------------------------------------------------
+;;; Interrupts
+;;; ----------------------------------------------------------------------------	
+
+IRQPTR		= $0314		; Interrupt pointer
+						
 CIA1		= $dc00		; CIA 1 base address
 CIA1_IRQ	= CIA1 + $0d	; IRQ control register
 
 CIA2		= $dd00		; CIA 2 base address
 CIA2_IRQ	= CIA2 + $0d	; IRQ control register	
 
+;;; ----------------------------------------------------------------------------
+;;; Colors
+;;; ----------------------------------------------------------------------------
+	
 COL_RED		= $02
+
+;;; ----------------------------------------------------------------------------
+;;; Music
+;;; ----------------------------------------------------------------------------
+
+MUS_INIT	= $1000		;  Initialize music
+MUS_PLAY	= $1003		;  Play music

@@ -1,0 +1,82 @@
+;;; ****************************************************************************
+;;; Spaceballs - Test Sprite
+;;;
+;;; Display a single ball on the screen 
+;;; 
+;;; References	 
+;;;	http://www.retro-programming.de/?page_id=2874
+;;; ****************************************************************************
+	
+!to "test-sprite.prg", cbm
+
+!source "../sb_constants.acm"	; Include constants
+		
+*=$0801				; SYS 2062
+ !byte $0B,$08,$DD,$07,$9E,$20,$32,$30,$36,$32,$00,$00,$00
+	
+	lda #<sprdat		; LSB of sprites data
+	sta calc16Bit		; 
+	lda #>sprdat		; MSB 
+	sta calc16Bit+1
+	ldx #$06		; Shift counter for division by 64
+
+loop:
+	lsr calc16Bit+1		; MSB shift right 
+	ror calc16Bit		; LSB rotate right (with carry flag!)
+	dex                         
+	bne loop
+
+	lda calc16Bit		; Store LSB (block no.) in sprite 0 pointer 
+	sta SPR0DAT
+
+	lda #%00000000 		; No magnification
+	sta SPRDH
+	sta SPRDW
+
+	sta SPRMCOL		; No multicolor but high-res. sprites
+	sta SPRBOT		; Sprites on top of background 
+
+	lda #COL_RED		; Set sprite 0 color 
+	sta SPR0COL
+
+	;; Set sprite 0 position
+	lda #$00		; Clear sprites X position, high bit
+	sta SPRXHIGH
+	lda #$20
+	sta SPR0POSX
+	lda #$80
+	sta SPR0POSY
+
+	lda #%00000001		; Activate sprite 0
+	sta SPRACT
+
+	rts			; Return to BASIC
+	
+calc16Bit:
+	!byte $00, $00
+	
+!align 63,0
+sprdat:	
+	!byte $00, $00, $00
+	!byte $00, $7e, $00
+	!byte $01, $ff, $80
+	!byte $03, $ff, $c0
+	!byte $07, $ff, $e0
+	!byte $0f, $ff, $f0
+	!byte $1f, $ff, $f8
+	!byte $1f, $ff, $f8
+	!byte $3f, $ff, $fc
+	!byte $3f, $ff, $fc
+	!byte $3f, $ff, $fc
+	!byte $3f, $ff, $fc
+	!byte $3f, $ff, $fc
+	!byte $3f, $ff, $fc
+	!byte $1f, $ff, $f8
+	!byte $1f, $ff, $f8
+	!byte $0f, $ff, $f0
+	!byte $07, $ff, $e0
+	!byte $03, $ff, $c0
+	!byte $01, $ff, $80
+	!byte $00, $7e, $00
+	!byte $00
+
